@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.rest.webservices.grant.exception.CustomizedIdNotFoundException;
 import com.rest.webservices.grant.model.FamilyMember;
 import com.rest.webservices.grant.respository.FamilyMemberRespository;
 
@@ -45,6 +46,11 @@ public class FamilyMemberController {
 	@GetMapping("/familymembers/{id}")
 	public Optional<FamilyMember> retrieveFamilyMember(@PathVariable int id) {
 		Optional<FamilyMember> familyMember = familyMemberRepository.findById(id);
+		// check if anything is returned else return customized exception
+		if (!(familyMember.isPresent())) {
+			//to return message "id-1 not found"
+			throw new CustomizedIdNotFoundException("id-" + id);
+		}
 		return familyMember;
 	}
 

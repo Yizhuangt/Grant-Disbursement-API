@@ -3,23 +3,49 @@ package com.rest.webservices.grant.model;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.TableGenerator;
+import javax.validation.constraints.Past;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.NotNull;
 
 @Entity // map to sql table
 public class FamilyMember {
 
 	@Id // Primary Key
-	@GeneratedValue
+	@TableGenerator(name = "id", initialValue = 213)
+	@GeneratedValue(strategy = GenerationType.TABLE, generator = "id") // database to generate id
 	private Integer id;
 
+	@Size(min = 2, max = 50, message = "Name should be between 2 and 50 characters")
 	private String name;
+
+	@NotNull
 	private String gender;
+
+	@NotNull
 	private String maritalStatus;
+
 	private String spouse;
+
+	@NotNull
 	private String occupationType;
+
+	@NotNull
 	private Integer annualIncome;
+
+	@Past
 	private Date dob;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JsonIgnore // Prevent
+	private HouseHold houseHold;
 
 	public FamilyMember(Integer id, String name, String gender, String maritalStatus, String spouse,
 			String occupationType, Integer annualIncome, Date dob) {
@@ -100,6 +126,14 @@ public class FamilyMember {
 
 	public void setDob(Date dob) {
 		this.dob = dob;
+	}
+
+	public HouseHold getHouseHold() {
+		return houseHold;
+	}
+
+	public void setHouseHold(HouseHold houseHold) {
+		this.houseHold = houseHold;
 	}
 
 	@Override
