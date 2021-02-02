@@ -134,4 +134,154 @@ public class HouseHoldController {
 			throw new CustomizedIdNotFoundException("id 2-" + id);
 		}
 	}
+
+	// seb = Student Encouragement Bonus
+	// Children less than 16 years old
+	// income less than $150,000
+	@GetMapping("/seb")
+	public List<HouseHold> retrieveSEBHouseHold() {
+		List<HouseHold> householdList = houseHoldRepository.findAll();
+
+		Iterator<HouseHold> iterator = householdList.iterator();
+		while (iterator.hasNext()) {
+			List<FamilyMember> familyMemberList = iterator.next().getFamilyMembers();
+			int totalIncome = calculateIncome(familyMemberList);
+			boolean hasAgeBelow16 = belowAge(familyMemberList, 16);
+
+			if ((totalIncome >= 150000) || (hasAgeBelow16 == false)) {
+				iterator.remove();
+				continue;
+			}
+		}
+
+		return householdList;
+	}
+
+	// fts - Family Together Scheme
+	// household with husband & wife
+	// children younger than 18
+	@GetMapping("/fts")
+	public List<HouseHold> retrieveFTSHouseHold() {
+		List<HouseHold> householdList = houseHoldRepository.findAll();
+
+		Iterator<HouseHold> iterator = householdList.iterator();
+		while (iterator.hasNext()) {
+			List<FamilyMember> familyMemberList = iterator.next().getFamilyMembers();
+			boolean hasBelowAge18 = belowAge(familyMemberList, 18);
+			boolean hasSpouse = hasSpouse(familyMemberList);
+
+			if ((hasSpouse == false) || (hasBelowAge18 == false)) {
+				iterator.remove();
+				continue;
+			}
+		}
+		return householdList;
+	}
+
+	// eb = Elder Bonus
+	// family member aged above 50
+	@GetMapping("/eb")
+	public List<HouseHold> retrieveEBHouseHold() {
+		List<HouseHold> householdList = houseHoldRepository.findAll();
+
+		Iterator<HouseHold> iterator = householdList.iterator();
+		while (iterator.hasNext()) {
+			List<FamilyMember> familyMemberList = iterator.next().getFamilyMembers();
+			boolean hasAboveAge50 = aboveAge(familyMemberList, 50);
+
+			if (hasAboveAge50 == false) {
+				iterator.remove();
+				continue;
+			}
+		}
+		return householdList;
+	}
+
+	// bsg = Baby Sunshine Grant
+	// children younger than 5
+	@GetMapping("/bsg")
+	public List<HouseHold> retrieveBSGHouseHold() {
+		List<HouseHold> householdList = houseHoldRepository.findAll();
+
+		Iterator<HouseHold> iterator = householdList.iterator();
+		while (iterator.hasNext()) {
+			List<FamilyMember> familyMemberList = iterator.next().getFamilyMembers();
+			boolean hasBelowAge5 = belowAge(familyMemberList, 5);
+
+			if (hasBelowAge5 == false) {
+				iterator.remove();
+				continue;
+			}
+		}
+		return householdList;
+	}
+
+	// Ygg = yolo gst grant
+	// annual income less than 100,000
+	@GetMapping("/ygg")
+	public List<HouseHold> retrieveYGGHouseHold() {
+		List<HouseHold> householdList = houseHoldRepository.findAll();
+
+		Iterator<HouseHold> iterator = householdList.iterator();
+		while (iterator.hasNext()) {
+			List<FamilyMember> familyMemberList = iterator.next().getFamilyMembers();
+			int annualIncome = calculateIncome(familyMemberList);
+
+			if (annualIncome >= 100000) {
+				iterator.remove();
+				continue;
+			}
+		}
+		return householdList;
+	}
+
+	
+	private Integer calculateIncome(List<FamilyMember> familyMemberList) {
+		Integer totalIncome = 0;
+		for (FamilyMember familyMember : familyMemberList) {
+			totalIncome += familyMember.getAnnualIncome();
+		}
+		return totalIncome;
+	}
+
+	private boolean belowAge(List<FamilyMember> familyMemberList, int age) {
+		for (FamilyMember familyMember : familyMemberList) {
+			if (getAge(familyMember) < age) {
+				log.info("hasBelowAge " + familyMember.getDob().toString());
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean aboveAge(List<FamilyMember> familyMemberList, int age) {
+		for (FamilyMember familyMember : familyMemberList) {
+			if (getAge(familyMember) > age) {
+				log.info("hasAboveAge " + familyMember.getDob().toString());
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private int getAge(FamilyMember familyMember) {
+		// get the age based on DOB and current date
+		long diffInMillies = Math.abs(new Date().getTime() - familyMember.getDob().getTime());
+		long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+		return (int) Math.floorDiv(diff, 365);
+	}
+
+	private boolean hasSpouse(List<FamilyMember> familyMemberList) {
+		for (FamilyMember familyMember : familyMemberList) {
+			if (!(familyMember.getSpouse().equals(""))) {
+				for (FamilyMember familyMember2 : familyMemberList) {
+					if (familyMember2.getName().equals(familyMember.getSpouse())) {
+						log.info("hasSpouse " + familyMember.getName().toString());
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 }
