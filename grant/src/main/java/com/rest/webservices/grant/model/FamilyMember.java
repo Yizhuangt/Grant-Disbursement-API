@@ -31,7 +31,7 @@ import com.sun.istack.NotNull;
 public class FamilyMember {
 
 	@Id // Primary Key
-	@TableGenerator(name = "id", initialValue = 213)
+	@TableGenerator(name = "id", initialValue = 215)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "id") // database to generate id
 //	@JsonIgnore
 	private Integer id;
