@@ -108,11 +108,20 @@ Individual RestAPI Calls
 
 Grant RestAPI Calls
 =============
-1.	GET - http://localhost:8080/student?age=16&income_limit=150000 
-2.	GET - http://localhost:8080/family?age=18
-3.	GET - http://localhost:8080/elder?age=50&household_type=HDB 
-4.	GET - http://localhost:8080/baby?age=5  
-5.	GET - http://localhost:8080/yolo?income=100000&household_type=HDB
+1.	Student - Household with children less than 16 years old & income of less than $150,000
+#### GET - http://localhost:8080/student?age=16&income_limit=150000 
+
+2.	Family - Households with husband & wife & Has child(ren) younger than 18 years old.
+#### GET - http://localhost:8080/family?age=18
+
+3.	Elder - HDB household with family members above the age of 50
+#### GET - http://localhost:8080/elder?age=50&household_type=HDB 
+
+4.	Baby - Household with young children younger than 5.
+#### GET - http://localhost:8080/baby?age=5  
+
+5.	YOLO - HDB households with annual income of less than $100,000.
+#### GET - http://localhost:8080/yolo?income=100000&household_type=HDB
 
 
 All in 1 API (Optional Param) REST API Calls
