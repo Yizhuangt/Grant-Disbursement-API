@@ -2,24 +2,30 @@ package com.rest.webservices.grant.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.TableGenerator;
 
 @Entity
+@NamedQueries({
+		@NamedQuery(name = "HouseHold.findByHouseholdType", query = "from HouseHold hh WHERE lower(hh.houseHoldType) = :householdType") })
+
 public class HouseHold {
 
 	@Id
-	@TableGenerator(name = "id", initialValue = 4) 
+	@TableGenerator(name = "id", initialValue = 5)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "id")
 	private Integer id;
 
 	private String houseHoldType;
 
-	@OneToMany(mappedBy = "houseHold")
+	@OneToMany(mappedBy = "houseHold", cascade = CascadeType.REMOVE)
 	private List<FamilyMember> familyMembers;
 
 	protected HouseHold() {

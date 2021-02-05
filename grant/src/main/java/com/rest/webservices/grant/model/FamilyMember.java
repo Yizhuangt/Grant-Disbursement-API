@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.TableGenerator;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
@@ -16,11 +18,22 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sun.istack.NotNull;
 
 @Entity // map to sql table
+@NamedQueries({
+		@NamedQuery(name = "FamilyMember.findFamily", query = "SELECT distinct(fm.houseHold) FROM FamilyMember fm WHERE (DATEDIFF(hour,fm.dob ,sysdate())/8766) < :belowAge AND fm.houseHold IN (SELECT fm.houseHold FROM FamilyMember fm WHERE fm.spouse<>'' Group by fm.houseHold HAVING COUNT(fm.spouse)>1)"),
+		@NamedQuery(name = "FamilyMember.findStudent", query = "SELECT distinct(fm.houseHold) FROM FamilyMember fm INNER JOIN HouseHold hh ON hh.id =fm.houseHold WHERE (DATEDIFF(hour,fm.dob,sysdate())/8766) < :belowAge AND hh.id IN (SELECT fm.houseHold FROM fm Group by fm.houseHold Having SUM(fm.annualIncome) < :incomeLimit)"),
+		@NamedQuery(name = "FamilyMember.findElder", query = "SELECT distinct(fm.houseHold) FROM FamilyMember fm WHERE (DATEDIFF(hour,fm.dob ,sysdate())/8766) > :aboveAge AND fm.houseHold IN (SELECT hh.id from HouseHold hh WHERE lower(hh.houseHoldType) = :houseHoldType)"),
+		@NamedQuery(name = "FamilyMember.findYolo", query = "SELECT distinct(fm.houseHold) FROM FamilyMember fm INNER JOIN HouseHold hh ON hh.id =fm.houseHold WHERE lower(hh.houseHoldType) = :houseHoldType GROUP BY fm.houseHold HAVING SUM(fm.annualIncome) < :incomeLimit"),
+		@NamedQuery(name = "FamilyMember.findBelowAge", query = "SELECT distinct(fm.houseHold) FROM FamilyMember fm WHERE (DATEDIFF(hour,fm.dob ,sysdate())/8766) < :belowAge"),
+		@NamedQuery(name = "FamilyMember.findAboveAge", query = "SELECT distinct(fm.houseHold) FROM FamilyMember fm WHERE (DATEDIFF(hour,fm.dob ,sysdate())/8766) > :aboveAge"),
+		@NamedQuery(name = "FamilyMember.findBelowIncome", query = "SELECT distinct(fm.houseHold) FROM FamilyMember fm GROUP BY fm.houseHold HAVING SUM(fm.annualIncome) < :incomeLimit"),
+		@NamedQuery(name = "FamilyMember.findSpouse", query = "SELECT fm.houseHold FROM FamilyMember fm WHERE fm.spouse<>'' Group by fm.houseHold HAVING COUNT(fm.spouse)>1") })
+
 public class FamilyMember {
 
 	@Id // Primary Key
 	@TableGenerator(name = "id", initialValue = 213)
 	@GeneratedValue(strategy = GenerationType.TABLE, generator = "id") // database to generate id
+//	@JsonIgnore
 	private Integer id;
 
 	@Size(min = 2, max = 50, message = "Name should be between 2 and 50 characters")

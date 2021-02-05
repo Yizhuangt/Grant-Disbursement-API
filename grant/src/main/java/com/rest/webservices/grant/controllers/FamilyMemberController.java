@@ -48,8 +48,8 @@ public class FamilyMemberController {
 		Optional<FamilyMember> familyMember = familyMemberRepository.findById(id);
 		// check if anything is returned else return customized exception
 		if (!(familyMember.isPresent())) {
-			//to return message "id-1 not found"
-			throw new CustomizedIdNotFoundException("id-" + id);
+			// to return message "id-1 not found"
+			throw new CustomizedIdNotFoundException("family member id-" + id);
 		}
 		return familyMember;
 	}
@@ -57,6 +57,12 @@ public class FamilyMemberController {
 	// deleteFamilyMember
 	@DeleteMapping("/familymembers/{id}")
 	public void deleteFamilyMember(@PathVariable int id) {
+		Optional<FamilyMember> familyMember = familyMemberRepository.findById(id);
+		// check if anything is returned else return customized exception
+		if (!(familyMember.isPresent())) {
+			// to return message "id-1 not found"
+			throw new CustomizedIdNotFoundException("family member id-" + id);
+		}
 		familyMemberRepository.deleteById(id);
 	}
 }
