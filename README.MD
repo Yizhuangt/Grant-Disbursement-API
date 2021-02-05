@@ -28,20 +28,68 @@ Connecting to DB
 HouseHolds RestAPI Calls
 =============
 1.	GET - http://localhost:8080/households
-2.	POST - http://localhost:8080/households
+2.	POST - http://localhost:8080/households 
+{
+	"houseHoldType": "HDB"
+}
+
+
 3.	GET - http://localhost:8080/households/1 
 4.	DELETE - http://localhost:8080/households/1
+If not found - Body
+{
+    "timestamp": "2021-02-04T07:42:44.623+00:00",
+    "message": "household id-5 not found",
+    "details": "uri=/households/5"
+}
+
+
 5.	GET - http://localhost:8080/households/2/familymembers 
 6.	POST - http://localhost:8080/households/2/familymembers
+{
+    "name": "Jacky",
+    "gender": "M",
+    "maritalStatus": "single",
+    "spouse": "",
+    "occupationType": "Student",
+    "annualIncome": 0,
+    "dob": "2011-02-01T16:00:00.000+00:00"
+}
+
+
 7.	DELETE - http://localhost:8080/households/2/familymembers/206
+If not found in households – 
+{
+    "timestamp": "2021-02-04T07:56:39.315+00:00",
+    "message": "household: 3- familymember: 205 not found",
+    "details": "uri=/households/3/familymembers/205"
+}
 
 
 Family RestAPI Calls
 =============
 1.	GET - http://localhost:8080/familymembers 
 2.	POST - http://localhost:8080/familymembers
+{
+    "name": "Jenifer",
+    "gender": "F",
+    "maritalStatus": "single",
+    "spouse": "",
+    "occupationType": "Employed",
+    "annualIncome": 30000,
+    "dob": "1988-02-01T16:00:00.000+00:00"
+}
+
+
 3.	GET - http://localhost:8080/familymembers/201
 4.	DELETE - http://localhost:8080/familymembers/3
+If familymember not found
+{
+    "timestamp": "2021-02-04T08:02:13.610+00:00",
+    "message": "family member id-214 not found",
+    "details": "uri=/familymembers/214"
+}
+
 
 
 Individual RestAPI Calls
